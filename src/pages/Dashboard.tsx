@@ -1,85 +1,108 @@
 import { useNavigate } from "react-router-dom";
-import { toast } from "sonner";
-import { LogOut, User, Settings, Home } from "lucide-react";
-
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
+import { ArrowRight, BarChart3, Calendar, Settings, Users } from "lucide-react";
+import { useToast } from "@/components/ui/use-toast";
+import { useEffect } from "react";
+import { useAuthStatus } from "@/lib/auth";
 
 export default function Dashboard() {
   const navigate = useNavigate();
+  const { toast } = useToast();
+  const { isAuthenticated, user } = useAuthStatus();
 
-  const handleLogout = () => {
-    toast.success("Logged out successfully");
-    navigate("/");
-  };
+  useEffect(() => {
+    if (!isAuthenticated) {
+      navigate("/login");
+      toast({
+        title: "Authentication required",
+        description: "Please log in to access the dashboard",
+        variant: "destructive",
+      });
+    }
+  }, [isAuthenticated, navigate, toast]);
+
+  const quickLinks = [
+    { 
+      title: "Analytics", 
+      description: "View your site analytics and performance metrics", 
+      icon: <BarChart3 className="h-6 w-6 text-primary" />,
+      onClick: () => toast({ title: "Analytics coming soon!" })
+    },
+    { 
+      title: "Users", 
+      description: "Manage user accounts and permissions", 
+      icon: <Users className="h-6 w-6 text-primary" />,
+      onClick: () => toast({ title: "User management coming soon!" })
+    },
+    { 
+      title: "Calendar", 
+      description: "Schedule and manage your appointments", 
+      icon: <Calendar className="h-6 w-6 text-primary" />,
+      onClick: () => toast({ title: "Calendar coming soon!" })
+    },
+    { 
+      title: "Settings", 
+      description: "Configure your account preferences", 
+      icon: <Settings className="h-6 w-6 text-primary" />,
+      onClick: () => toast({ title: "Settings coming soon!" })
+    },
+  ];
+
+  if (!isAuthenticated) {
+    return null;
+  }
 
   return (
-    <div className="min-h-screen bg-slate-50">
-      <header className="bg-white shadow">
-        <div className="container mx-auto px-4 py-4 flex justify-between items-center">
-          <h1 className="text-xl font-bold">Application Dashboard</h1>
-          <Button variant="ghost" onClick={handleLogout}>
-            <LogOut className="h-4 w-4 mr-2" /> Logout
-          </Button>
-        </div>
-      </header>
+    <div className="container px-4 py-8 mx-auto max-w-7xl">
+      <div className="flex flex-col gap-8">
+        <section className="space-y-4">
+          <h1 className="text-3xl font-bold tracking-tight">
+            Welcome back, {user?.name || "User"}!
+          </h1>
+          <p className="text-muted-foreground">
+            Here's what's happening with your account today.
+          </p>
+        </section>
 
-      <main className="container mx-auto px-4 py-8">
-        <h2 className="text-2xl font-bold mb-6">Welcome back!</h2>
-        
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <section className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+          {quickLinks.map((link, index) => (
+            <Card key={index} className="hover:shadow-md transition-shadow">
+              <CardHeader className="flex flex-row items-center justify-between pb-2">
+                <CardTitle className="text-lg font-medium">{link.title}</CardTitle>
+                {link.icon}
+              </CardHeader>
+              <CardContent>
+                <CardDescription className="min-h-[40px]">{link.description}</CardDescription>
+                <Button 
+                  variant="ghost" 
+                  className="mt-2 p-0 h-auto font-medium" 
+                  onClick={link.onClick}
+                >
+                  Learn more <ArrowRight className="ml-1 h-4 w-4" />
+                </Button>
+              </CardContent>
+            </Card>
+          ))}
+        </section>
+
+        <section>
           <Card>
-            <CardHeader className="pb-2">
-              <CardTitle className="text-lg font-medium flex items-center">
-                <Home className="h-5 w-5 mr-2 text-blue-500" />
-                Dashboard Home
-              </CardTitle>
-              <CardDescription>Overview of your account</CardDescription>
+            <CardHeader>
+              <CardTitle>Recent Activity</CardTitle>
+              <CardDescription>Your most recent activities and events</CardDescription>
             </CardHeader>
             <CardContent>
-              <p className="text-sm text-slate-600">
-                This is your main dashboard where you can see your account information and activity.
-              </p>
+              <div className="text-center py-6">
+                <p className="text-muted-foreground">No recent activities to display</p>
+                <Button className="mt-4" onClick={() => toast({ title: "Activity history coming soon!" })}>
+                  View all activity
+                </Button>
+              </div>
             </CardContent>
           </Card>
-
-          <Card>
-            <CardHeader className="pb-2">
-              <CardTitle className="text-lg font-medium flex items-center">
-                <User className="h-5 w-5 mr-2 text-green-500" />
-                Profile
-              </CardTitle>
-              <CardDescription>Manage your profile</CardDescription>
-            </CardHeader>
-            <CardContent>
-              <p className="text-sm text-slate-600">
-                Update your personal information, change your password, and manage your account settings.
-              </p>
-            </CardContent>
-          </Card>
-
-          <Card>
-            <CardHeader className="pb-2">
-              <CardTitle className="text-lg font-medium flex items-center">
-                <Settings className="h-5 w-5 mr-2 text-purple-500" />
-                Settings
-              </CardTitle>
-              <CardDescription>Configure your preferences</CardDescription>
-            </CardHeader>
-            <CardContent>
-              <p className="text-sm text-slate-600">
-                Adjust your notification preferences, privacy settings, and other account configurations.
-              </p>
-            </CardContent>
-          </Card>
-        </div>
-      </main>
+        </section>
+      </div>
     </div>
   );
 }
