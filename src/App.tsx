@@ -1,17 +1,11 @@
-import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { Toaster } from "@/components/ui/toaster";
-import Login from "./pages/Login";
-import Dashboard from "./pages/Dashboard";
+import RegisterForm from "@/components/RegisterForm";
 
 export default function App() {
   return (
-    <BrowserRouter>
-      <Routes>
-        <Route path="/login" element={<Login />} />
-        <Route path="/dashboard" element={<Dashboard />} />
-        <Route path="/" element={<Navigate to="/dashboard" replace />} />
-      </Routes>
+    <main className="min-h-screen bg-gray-50 dark:bg-slate-900 py-12 px-4">
+      <RegisterForm />
       <Toaster />
-    </BrowserRouter>
+    </main>
   );
 }
