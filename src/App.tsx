@@ -1,11 +1,15 @@
-import { Toaster } from "@/components/ui/toaster";
-import RegisterForm from "@/components/RegisterForm";
+import { RegistrationForm } from "./components/RegistrationForm";
+import { Toaster } from "sonner";
 
-export default function App() {
+function App() {
   return (
-    <main className="min-h-screen bg-gray-50 dark:bg-slate-900 py-12 px-4">
-      <RegisterForm />
-      <Toaster />
-    </main>
+    <div className="min-h-screen bg-slate-50 dark:bg-slate-950 flex items-center justify-center p-4">
+      <Toaster position="top-center" richColors />
+      <main className="w-full max-w-md">
+        <RegistrationForm />
+      </main>
+    </div>
   );
 }
+
+export default App;
